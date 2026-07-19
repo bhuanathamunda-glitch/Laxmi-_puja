@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Diwali</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+        /* Full Screen Image Setup */
+        #laxmiImage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Yeh image ko poori screen par stretch karega */
+            z-index: 1;
+        }
+
+        .controls { 
+            position: absolute; 
+            bottom: 50px; 
+            width: 100%; 
+            text-align: center; 
+            z-index: 10; 
+        }
+        
+        input { width: 80%; padding: 15px; border-radius: 25px; border: none; margin-bottom: 15px; text-align: center; }
+        
+        .share-btn { 
+            padding: 15px 35px; background: #25D366; color: white; border: none; 
+            border-radius: 50px; font-size: 1.2em; font-weight: bold; cursor: pointer;
+            animation: popEffect 1.5s infinite;
+        }
+        @keyframes popEffect { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    </style>
+</head>
+<body>
+
+    <!-- Image Tag - Browser ise har haal mein dikhayega -->
+    <img id="laxmiImage" src="Laxmi.gif" alt="Maa Laxmi">
+
+    <div class="controls" id="actionArea">
+        <input type="text" id="nameInput" placeholder="Apna naam likhein...">
+        <br>
+        <button class="share-btn" onclick="generateAndShare()">WhatsApp Share 💬</button>
+    </div>
+
+<script>
+    // Agar image load nahi hoti, toh console mein error check karein
+    const img = document.getElementById('laxmiImage');
+    img.onerror = function() {
+        alert("Error: Laxmi.gif file nahi mil rahi! Check karein ki image ka naam Laxmi.gif hi hai.");
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    if (name) {
+        document.getElementById('actionArea').innerHTML = `
+            <div style="color:white; font-size: 20px; font-weight: bold; margin-bottom:15px; text-shadow: 2px 2px 5px black;">Happy Diwali from ${name}</div>
+            <button class="share-btn" onclick="window.location.href='index.html'">Create New</button>
+        `;
+    }
+
+    function generateAndShare() {
+        const name = document.getElementById('nameInput').value;
+        if (!name) return alert("Kripya apna naam likhein!");
+        const shareUrl = window.location.origin + window.location.pathname + "?name=" + encodeURIComponent(name);
+        
+        if (navigator.share) {
+            navigator.share({ title: 'Happy Diwali!', text: `${name} ne aapke liye wish bheji hai!`, url: shareUrl });
+        } else {
+            window.open(`https://wa.me/?text=Happy Diwali! ${encodeURIComponent(name)} ne bheji hai: ${shareUrl}`);
+        }
+    }
+</script>
+</body>
+</html>
